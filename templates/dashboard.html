@@ -1,0 +1,89 @@
+<!doctype html>
+<title>Docker Dashboard</title>
+<style>
+  html, body {
+      height: 100%;
+  }
+
+  html {
+      display: table;
+      margin: auto;
+  }
+
+  .table {
+      margin: 0px auto;
+      vertical-align: middle;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  body {
+      vertical-align: middle;
+  }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  $('.stopButton').click(function(){
+    var id = $('.stopButton').parent().parent().children()[0].innerHTML;
+    console.log(id);
+    $.post('/stop/' + id, function(data){
+      console.log(data);
+      location.reload();
+    });
+  });
+  $('.startButton').click(function(){
+    var image = $('#image')[0].value;
+    $(this).append("<div class='loading'></div>Loading...");
+    $.post('/start/' + image, function(data){
+      console.log(image);
+      if(data != null){
+        console.log(data);
+        $('#error').append('<alert class="alert alert-error" style="font-size: 75%">'+ data +'</alert>');
+      }
+      location.reload();
+    });
+  });
+});
+
+</script>
+<head>
+  <div id="error"></div>
+</head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.7.7/hack.css">
+<body class="hack">
+  <div class="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Container ID</th>
+          <th>Container Name</th>
+          <th>Command</th>
+          <th>Started</th>
+          <th>Time Up</th>
+          <th>Ports</th>
+          <th>Image</th>
+          <th>Stop</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for item in running %}
+            <tr>
+              {% for cell in item %}
+                <td class="content">{{cell}}</td>
+              {% endfor %}
+              <td class="content"><button class="btn btn-error stopButton" style="padding:10px 10px">X</button></td>
+            </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+
+    <input id="image" type="text" placeholder="Image"></input><button class="btn btn-primary startButton">Start</button>
+  </div>
+</body>
