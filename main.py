@@ -22,3 +22,6 @@ def stop(cid):
     if request.method == 'POST':
         thread.start_new_thread(docker.stop, (cid,))
         return 'Stopping ' + cid
+
+if __name__ == "__main__":
+	app.run(host="0.0.0.0")
